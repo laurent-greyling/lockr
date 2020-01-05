@@ -1,0 +1,165 @@
+Smartlockr
+
+Pillars:
+   - High Quality Coding, 
+   - Code Review 
+   - Technical Impact
+
+Technologies:
+   - .Net core WebApi
+   - Azure
+   - Frontend MVC or Angular
+   - Secure App
+	- Identity Server 4 (AAD/SSO?)
+
+Assignment
+   - Accounts page user generate API key to access api / call api endpoint (without access key, no access)
+   - Encrypt all information
+     - Azure sql security and masking??
+   - Compliant entities need to have a TXT record published in their DNS
+     - example: v=NTA7516;version:2019-06;expire:2020-09;provider:smartlockr;ntamx:inc.webser.nl;ntamx:inc2.webser.nl
+   - CRUD app manage domains
+   - Added Domain - Check following:  
+     - Compliant with NTA7516
+     - Compliancy still valid - compare expirydate
+     - Provider used
+     - Domain NTA MX server located
+
+Test Domains:
+   - attaching.it
+   - gofuse.io
+   - smartlockr.co
+
+User Stories:
+   1. Logged in user Generate API Key
+	- Store encrypted API key
+	- Can be regenerated
+   2. API accessed via RESTFull call with from "Postman"
+	- API key roles
+		=> RestApi
+ 		=> FrontApi
+   3. Add email address so domain can be checked for compliance
+	- Extract Domain from Email Address
+	- Check for NTA7516 compliancy
+		- version
+		- expiry date validity
+		- provider
+		- list of NTAMX
+	- Save compliant and non compliant domains to database
+	- Endpoint can be called with api key as well
+   4. Recheck saved domain for validity and changes
+	- Check for NTA7516 compliancy
+		- version
+		- expiry date validity
+		- provider
+		- list of NTAMX
+	- Save changes
+	- Front end show if changes
+	- Endpoint can be called with api key as well
+   5. Check periodically for validity/compliance (Azure Function - TimerTrigger or DatabaseTrigger)
+	- Check for NTA7516 compliancy
+		- version
+		- expiry date validity
+		- provider
+		- list of NTAMX
+	- Save changes
+	- Front end show if changes
+   6. Added domain has DNSSEC implemented
+	- Check domain for DNSSEC validity
+	- DNSSEC status saved domain table
+	- Frontend show dnssec status
+	- Endpoint can be called via api
+
+
+Tasks:
+   1. Identity Server:
+	- Create Identity server App
+	- Create AAD resource
+		- Use AAD so one does not have to still write your own Auth code and validations.
+		- Azure does this already and it is the more secure path.
+	- Register app in AAD
+	- Create AAD User
+	- Update Identity Server with details for AAD login
+
+   2. Create basic Frontend (Angular)
+	- Authenticate and get to home page
+	- If not Authenticated redirect to identiy server
+	- Tests
+
+   3. Generate API key
+	- Create
+	- Encrypt
+	- Save (SQL or Keyvault???)
+	- Regenerate Key and Update
+	- ApiKeyEntity //If SQL	
+	  {
+		Id = Key
+		User = UserId
+	  }
+	- If Keyvault: Name:UserId, Key:Key
+	- Visible on main page of app
+	- Tests
+   
+   4. Create a basic API (Asp.net Core)
+	- Authenticate to use API 
+		- Front end use Auth Token
+		- API use API key
+	- If not authenticated give '401 Unauthorized'
+	- Basic CRUD operations for adding domain info (Entity Framework Core)
+		DomainEntity
+		{
+			[Required]
+			Id = id,
+			Name = name,
+			[Nullable]	
+			Version =  version,
+			ExpiryDate = expiryDate,
+			Provider = provider,
+			NtaMxList = ntaMxList,
+			SpfVersion = Nta7516
+		}
+	- Tests
+
+   5. Add email and check domain for compliance
+	API:
+	- Extract domain from email
+	- Check for NTA7516 compliancy
+		- version
+		- expiry date validity
+		- provider
+		- list of NTAMX
+	- Save compliant and non complaint domains
+	FrontEnd:
+	- Display Domains
+	- Indicate if valid, about to expire or expired
+	- Add email and display validity of domain
+	- Tests
+
+   6. Recheck validity of domain
+
+   7. Check Validity/Compliance periodically
+	- Timer trigger (once a day), if valid update database
+	- Tests
+
+   8. Added domain has DNSSEC implemented
+	- Check domain for DNSSEC validity
+	- DNSSEC status saved domain table
+	  - Migrate table to add new status column
+	- Frontend show dnssec status
+	- Endpoint can be called via api
+	- Tests
+
+Question(s):
+- The TXT record published in their DNS, when, where and how is this generated?
+	- Can I just always use example?
+	- Is it generated when domain is registered? Expiry date always one year from now? 
+	- Give the user the ability to generate it? Similar to a sas token in azure storage, where I as admin specify expiry date (one year, one month, one week, one day) for example? 
+
+
+	
+
+
+
+	
+
+ 

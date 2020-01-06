@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace IdentityServerLockr
@@ -17,7 +18,13 @@ namespace IdentityServerLockr
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                    .UseStartup<Startup>();
+                .ConfigureAppConfiguration((hostingContext, config)=> 
+                {
+                    config.AddJsonFile(
+                    "appsettings.json", optional: false, reloadOnChange: true)                    
+                    .AddEnvironmentVariables();
+                })
+                .UseStartup<Startup>();
         }
     }
 }

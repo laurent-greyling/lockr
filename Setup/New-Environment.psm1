@@ -1,7 +1,6 @@
 ﻿#This will initialize the lockr environment
 # 1. Create Resource Group
-# 2. Create Keyvault resources
-# 3. Register app on AAD
+# 2. Register app on AAD
 function Initialize-LockrEnvironment
 {
     param(
@@ -30,6 +29,7 @@ function Initialize-LockrEnvironment
     if($signedIn)
     {
         CreateResourceGroup -resourceGroupName $resourceGroupName -location $location
+        CreateSqlServer -resourceGroupName $resourceGroupName -location $location
 
         Write-Host "If you forget to make not of tenant and/or AppId, rerun this. Will give error that resource already exist, but will find and display needed info" -ForegroundColor Gray
         RegisterAppOnAad -registeredAppDisplayName $registeredAppDisplayName -redirectUri $redirectUri"/signin-aad" -resourceGroupName $resourceGroupName
@@ -66,10 +66,13 @@ function RegisterAppOnAad
 
         $appInfo = $aadRegisterApp | ConvertFrom-Json
 
+        $user = az ad user list --display-name "Greyling"
+        $userInfo = $user | ConvertFrom-Json
+
+        az ad app owner add --id $appInfo.appId --owner-object-id $userInfo.objectId
+
         Write-Host "Make not of appId, password (ClientSecret) and tenant (TenantId), these are needed for the appsettings.json" -ForegroundColor Yellow
-        az ad app credential reset --id $appInfo.appId --credential-description "ClientSecret" --append         
-        
-        CreateAzureKeyVault -resourceGroupName $resourceGroupName -location $location -objectId $appInfo.appId # $appInfo.objectId      
+        az ad app credential reset --id $appInfo.appId --credential-description "ClientSecret" --append   
 }
 
 #Create Resource Group if Not Exist
@@ -94,40 +97,40 @@ function CreateResourceGroup
     }
 }
 
-#Create 2 keyvaults, one is for Lockr app secrets and the other to store clientAPIKeys
-function CreateAzureKeyVault
+#Create SQL if Not Exist
+function CreateSqlServer
 {
     param(
         [string]
         $resourceGroupName,
         [string]
-        $location,
-        [string]
-        $objectId
-        )
+        $location
+    ) 
+    
+    $sqlServerName = "${resourceGroupName}sqlserver"
+    Write-Host "Checking sql server $sqlServerName" -ForegroundColor Yellow
 
-        $keyvaultLokr = "${resourceGroupName}LockrKv"
-        $keyvaultApiKey = "${resourceGroupName}ApiKeysKv"
+    $sqlServerExists = az sql server show `
+    --name $sqlServerName `
+    --resource-group $resourceGroupName
 
-        Write-Host "Check if ${keyvaultLokr} exists" -ForegroundColor Yellow
-        $keyvaultLockrExists = az keyvault show --name $keyvaultLokr --resource-group $resourceGroupName
+    if(!$sqlServerExists)
+    {
 
-        if(!$keyvaultLockrExists)
-        {
-            Write-Host "Creating ${keyvaultLokr}" -ForegroundColor Green
-            az keyvault create --name $keyvaultLokr --resource-group $resourceGroupName --location $location
-            az keyvault set-policy --name $keyvaultLokr --spn $objectId --secret-permissions backup delete get list recover restore set
-        }
+        Write-Host "Creating sql server $sqlServerName" -ForegroundColor Yellow
+        #The password can also be user specified with small script change. Just easier this way and changing afterwards
+        Write-Host "Note: Reset admin password after creation to somwthing more secure and unknown" -ForegroundColor Red
+        az sql server create `
+        --admin-password "Sql@server12user" `
+        --admin-user "sqlserveruser" `
+        --name $sqlServerName `
+        --resource-group $resourceGroupName
 
-        Write-Host "Check if ${keyvaultApiKey} exists" -ForegroundColor Yellow
-        $keyvaultApiKeyExists = az keyvault show --name $keyvaultApiKey --resource-group $resourceGroupName
-
-        if(!$keyvaultApiKeyExists)
-        {
-            Write-Host "Creating ${keyvaultApiKey}" -ForegroundColor Green
-            az keyvault create --name $keyvaultApiKey --resource-group $resourceGroupName --location $location
-            az keyvault set-policy --name $keyvaultApiKey --spn $objectId --secret-permissions backup delete get list recover restore set
-        }
+        az sql db create `
+        -g $resourceGroupName `
+        -s $sqlServerName `
+        -n "LockrDb"
+    }
 }
 
 Export-ModuleMember Initialize-LockrEnvironment

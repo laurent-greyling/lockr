@@ -7,8 +7,9 @@ For signin we preferably want to use `Azure Active Directory` to login as it all
 The `Initialize-LockrEnvironment` script will:
 
 - Create a resourcegroup 
-- Register your given app with Active Directory and display your `TenantId (tenant)`, `AppId (appId)` and `CleintSecret (password)` on screen for use in `Identity Server` (`AppId`, `ClientId`), and the `MVC app` (`ClientSecret`, `ClientId`) in appsettings. 
-- Create 2 keyvaults, one for lockr secrets and the other for the ApiKeys. The name of the keyvault created for the Api keys will be used in the MVC app and is called `{ResourceGroupName}ApiKeysKv`. This you can also find on the output of your powershell window.
+- Create SQLServer called `{resourceGroupName}sqlserver` and a Database called `LockrDb`
+    - __Please Note__ You need to go into Azure Portal to set the Firewall rules for SQL Server as well as change/reset default password for security
+- Register your given app with Active Directory and display your `TenantId (tenant)` and `AppId (appId)` on screen for use in `Identity Server` (`AppId`, `ClientId`), and the `MVC app` (`ClientId`) in appsettings.
 
 To run the script open `powershell` and navigate to ".\Setup". From here run `Import-Module .\New-Environment.psm1 -Force`
 
@@ -29,8 +30,11 @@ Initialize-LockrEnvironment -resourceGroupName <your resourcegroupname> -locatio
 
 For now, you need to navigate to [Azure](https://portal.azure.com/) and set the permissions for your app at `App registration/Api permissions`.
 
+Graph:
+- Application.Read.All
 - IdentityProvider.Read.All
 - User.Read.All
+- Grant Administrative Rights
 
 ### 3. Setup identity server to use AAD
 
@@ -67,8 +71,12 @@ For the MVC solution we use the same `ClientId` as in Identity server. This can 
     }
   },
   "AllowedHosts": "*",
-  "KeyVault": "<Keyvault name for API {resourcegroupname}ApiKeysKv >",
-  "ClientSecret": "<Client secret, also seen as password>",
   "ClientId": "<Directory (tenant) ID>"
 }
 ```
+
+### 5. Run EntityFramework Migrations
+Run `update-database –verbose` or `dotnet ef database update` to run Migrations and create your SQL tables.
+
+Tables:
+- ApiKeys

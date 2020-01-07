@@ -1,9 +1,15 @@
-﻿@using Microsoft.AspNetCore.Authentication
+﻿@model ApiKeyModel
 
 <h2>Welcome to our super duper Lockr</h2>
 
-<form action="@Url.Action("Index", "ApiKey")">
-    <label>Api Key:</label>
-    @* Generated api key should be displayed here *@
-    <input type="submit" value="Generate Api Key">
+<form action="@Url.Action("Index", "Home")">
+    <div>
+        <H3>Api Key:</H3>
+    </div>
+    <div>
+        @Html.Label(Model.ApiKey)
+    </div>
+    <div>
+        <input type="submit" value="Generate Api Key">
+    </div>
 </form>

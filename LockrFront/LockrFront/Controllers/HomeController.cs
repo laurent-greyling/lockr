@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using LockrFront.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace LockrFront.Controllers
 {
@@ -10,14 +11,17 @@ namespace LockrFront.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        {            
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
+            var t = _configuration["SomeSecret"];
             return View();
         }
 

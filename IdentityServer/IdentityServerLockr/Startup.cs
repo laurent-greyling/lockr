@@ -37,6 +37,7 @@ namespace IdentityServerLockr
                 .AddTestUsers(TestUsers.Users);
 
             builder.AddDeveloperSigningCredential();
+
             services.AddAuthentication()
                 .AddOpenIdConnect("aad", "Azure AD", options =>
                 {

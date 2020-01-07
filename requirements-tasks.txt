@@ -81,10 +81,9 @@ Tasks:
 	- Create AAD User
 	- Update Identity Server with details for AAD login
 
-   2. Create basic Frontend (Angular)
+   2. Create basic Frontend (MVC)
 	- Authenticate and get to home page
 	- If not Authenticated redirect to identiy server
-	- Tests
 
    3. Generate API key
 	- Create

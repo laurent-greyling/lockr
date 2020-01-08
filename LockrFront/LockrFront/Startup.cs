@@ -22,6 +22,7 @@ namespace LockrFront
         public void ConfigureServices(IServiceCollection services)
         {
             var clientId = Configuration.GetValue<string>("ClientId");
+            var authority = Configuration.GetValue<string>("Authority");
 
             services.AddControllersWithViews();
             services.AddScoped<IApiKeyQueries, ApiKeyQueries>();
@@ -37,7 +38,7 @@ namespace LockrFront
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("aad", options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = authority;
                     options.RequireHttpsMetadata = false;
 
                     options.ClientId = clientId;

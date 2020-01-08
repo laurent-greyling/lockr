@@ -82,3 +82,12 @@ Run `update-database –verbose` or `dotnet ef database update` to run Migration
 
 Tables:
 - ApiKeys
+
+## MVC App (Front End)
+Once you run the Identity server and the MVC app, you can signin with either the test users Alice or Bob, but AAD should be setup in such a way that you can use your AAD credentials to signin as well to this app.
+
+Once you are signed in, you can:
+
+- Generate and regenerate an `API Key` under the `Generate Api Key` tab.
+  - Please note that this api key is hashed and saved into sql and if you navigate away from this page and did not copy the key you need to regenerate it as it will not be visible anymore.
+  - Copy it and keep it safe. If you use it in an app or share with someone for use and forget what it was, you will have to regenerate the code break any app currently using this api key

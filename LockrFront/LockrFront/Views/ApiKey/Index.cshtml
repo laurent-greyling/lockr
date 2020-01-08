@@ -3,6 +3,8 @@
 <h2>Generate ApiKey</h2>
 <label>
     This page is to generate an api key for external use.
+    Once you have generated an api key please make note of it as this page will not show it again when navigating away.
+    If any applications make use of this api key and you regenerate it, please beware that this will/could be a breaking change for those apps, so keep it save.
 </label>
 
 <form action="@Url.Action("Create", "ApiKey")">
@@ -13,8 +15,8 @@
         @Html.LabelForModel(Model?.ApiKey)
     </div>
     <div>
-        <input type="submit" value="Generate" @(!string.IsNullOrEmpty(Model?.ApiKey) ? "disabled" : "")>
-        <input type="button" value="ReGenerate" onclick="location.href='@Url.Action("Update", "ApiKey")'" @(string.IsNullOrEmpty(Model?.ApiKey) ? "disabled" : "")/>
+        <input type="submit" value="Generate" @(!string.IsNullOrEmpty(Model?.Id) ? "disabled" : "")>
+        <input type="button" value="ReGenerate" onclick="location.href='@Url.Action("Update", "ApiKey")'" @(string.IsNullOrEmpty(Model?.Id) ? "disabled" : "")/>
     </div>
 </form>
 

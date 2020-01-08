@@ -2,6 +2,8 @@
 using LockrFront.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LockrFront.Database
@@ -21,8 +23,7 @@ namespace LockrFront.Database
 
             return new ApiKeyModel 
             {
-                Id = Id,
-                ApiKey = apiKeyEntity == null ? string.Empty : apiKeyEntity.ApiKey 
+                Id = apiKeyEntity == null ? string.Empty : apiKeyEntity.Id
             };
         }
 
@@ -31,7 +32,7 @@ namespace LockrFront.Database
             _dbContext.ApiKeyEntity.Add(new ApiKeyEntity
             {
                 Id = model.Id,
-                ApiKey = model.ApiKey
+                ApiKey = GenerateApiKey(model.ApiKey)
             });
 
             await _dbContext.SaveChangesAsync();
@@ -42,10 +43,27 @@ namespace LockrFront.Database
             _dbContext.ApiKeyEntity.Update(new ApiKeyEntity
             {
                 Id = model.Id,
-                ApiKey = model.ApiKey
+                ApiKey = GenerateApiKey(model.ApiKey)
             });
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Generate a hashed key with userid as identifiable component in key
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private string GenerateApiKey(string apiKey)
+        {
+            var key = apiKey.Split(".");
+            var hash = SHA256.Create();
+            var hashByte = hash.ComputeHash(Encoding.UTF8.GetBytes(key[0]));
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in hashByte)
+                sb.Append(b.ToString("X2"));
+
+            return sb.ToString();
         }
     }
 }

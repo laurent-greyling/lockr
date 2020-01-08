@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace LockrFront.Controllers
 {
@@ -20,9 +18,11 @@ namespace LockrFront.Controllers
         // GET: ApiKey
         public IActionResult Index()
         {
+            //Only return the ID so we can know if object is available to disable or enable buttons
+            //As we hash the api key, we do not want to retrieve the hash and display that, this is all for security 
             var apiKeyModel = _queryEntities
                 .RetrieveApiKey(User.Claims.FirstOrDefault(x => x.Type == "sub").Value);
-
+                        
             return View(apiKeyModel);
         }
 
@@ -34,9 +34,10 @@ namespace LockrFront.Controllers
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "sub").Value;
                 var apiKeyModel = _queryEntities.RetrieveApiKey(userId);
 
-                if (string.IsNullOrEmpty(apiKeyModel.ApiKey))
+                //Check if we already have a record for Api Key, if not create new
+                if (string.IsNullOrEmpty(apiKeyModel.Id))
                 {
-                    apiKeyModel.ApiKey = GenerateApiKey(userId);
+                    apiKeyModel.ApiKey = $"{Guid.NewGuid().ToString()}.{userId}";
                     apiKeyModel.Id = userId;
                     _queryEntities.SaveApiKeyAsync(apiKeyModel);
                 }
@@ -56,7 +57,7 @@ namespace LockrFront.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(x => x.Type == "sub").Value;
                 var apiKeyModel = _queryEntities.RetrieveApiKey(userId);
-                apiKeyModel.ApiKey = GenerateApiKey(userId);
+                apiKeyModel.ApiKey = $"{Guid.NewGuid().ToString()}.{userId}";
 
                 _queryEntities.UpdateApiKey(apiKeyModel);
 
@@ -66,23 +67,6 @@ namespace LockrFront.Controllers
             {
                 return View();
             }
-        }
-
-        /// <summary>
-        /// Generate a hashed key with userid as identifiable component in key
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        private string GenerateApiKey(string userId)
-        {
-            var key = Guid.NewGuid().ToString();
-            var hash = SHA256.Create();
-            var hashByte = hash.ComputeHash(Encoding.UTF8.GetBytes(key));
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in hashByte)
-                sb.Append(b.ToString("X2"));
-
-            return $"{sb}.{userId}";
-        }
+        }        
     }
 }

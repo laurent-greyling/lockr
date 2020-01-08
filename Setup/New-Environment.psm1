@@ -40,6 +40,7 @@ function Initialize-LockrEnvironment
 function SignIn
 {    
     $signedIn = az account show
+    #Are we already signed in or not, if not display to user what to do
     if(!$signedIn)
     {
         az login --use-device-code
@@ -49,7 +50,7 @@ function SignIn
     Return $signedIn
 }
 
-#Register app on AAD
+#Register app on AAD and display the tenantId and clientId for us to use in appsettings.json of our projects
 function RegisterAppOnAad
 {
         param(
@@ -116,6 +117,8 @@ function CreateSqlServer
 
         Write-Host "Creating sql server $sqlServerName" -ForegroundColor Yellow
         #The password can also be user specified with small script change. Just easier this way and changing afterwards
+        #This is easier as we want to create table as well
+        #If want to specify own password and not admin one first, change script and pass param for password
         Write-Host "Note: Reset admin password after creation to somwthing more secure and unknown" -ForegroundColor Red
         az sql server create `
         --admin-password "Sql@server12user" `

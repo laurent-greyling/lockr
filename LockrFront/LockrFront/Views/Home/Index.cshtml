@@ -1,15 +1,22 @@
-﻿@model ApiKeyModel
+﻿@using Microsoft.AspNetCore.Authentication
 
-<h2>Welcome to our super duper Lockr</h2>
+<h2>Claims</h2>
 
-<form action="@Url.Action("Index", "Home")">
-    <div>
-        <H3>Api Key:</H3>
-    </div>
-    <div>
-        @Html.Label(Model.ApiKey)
-    </div>
-    <div>
-        <input type="submit" value="Generate Api Key">
-    </div>
-</form>
+<dl>
+    @foreach (var claim in User.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+
+<h2>Properties</h2>
+
+<dl>
+    @foreach (var prop in (await Context.AuthenticateAsync()).Properties.Items)
+    {
+        <dt>@prop.Key</dt>
+        <dd>@prop.Value</dd>
+    }
+</dl>
+

@@ -1,0 +1,20 @@
+﻿@model ApiKeyModel
+
+<h2>Generate ApiKey</h2>
+<label>
+    This page is to generate an api key for external use.
+</label>
+
+<form action="@Url.Action("Create", "ApiKey")">
+    <div>
+        <H3>Api Key:</H3>
+    </div>
+    <div>
+        @Html.LabelForModel(Model?.ApiKey)
+    </div>
+    <div>
+        <input type="submit" value="Generate" @(!string.IsNullOrEmpty(Model?.ApiKey) ? "disabled" : "")>
+        <input type="button" value="ReGenerate" onclick="location.href='@Url.Action("Update", "ApiKey")'" @(string.IsNullOrEmpty(Model?.ApiKey) ? "disabled" : "")/>
+    </div>
+</form>
+

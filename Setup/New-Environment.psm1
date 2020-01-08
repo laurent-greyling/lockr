@@ -62,17 +62,14 @@ function RegisterAppOnAad
         )
 
         Write-Host "Registering app with AAD"  -ForegroundColor Yellow
-        $aadRegisterApp = az ad app create --display-name $registeredAppDisplayName --reply-urls $redirectUri        
+        $aadRegisterApp = az ad app create --display-name $registeredAppDisplayName --reply-urls $redirectUri
 
         $appInfo = $aadRegisterApp | ConvertFrom-Json
 
-        $user = az ad user list --display-name "Greyling"
-        $userInfo = $user | ConvertFrom-Json
+        Write-Host "Make Note of Application (Client) ID: "$appInfo.appId -ForegroundColor Yellow
 
-        az ad app owner add --id $appInfo.appId --owner-object-id $userInfo.objectId
-
-        Write-Host "Make not of appId, password (ClientSecret) and tenant (TenantId), these are needed for the appsettings.json" -ForegroundColor Yellow
-        az ad app credential reset --id $appInfo.appId --credential-description "ClientSecret" --append   
+        $tenantId = az account get-access-token --query tenant --output tsv
+        Write-Host "Make Note of Directory (Tenant) ID: $tenantId"  -ForegroundColor Yellow
 }
 
 #Create Resource Group if Not Exist

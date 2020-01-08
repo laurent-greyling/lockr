@@ -24,7 +24,7 @@ namespace IdentityServerLockr
         public void ConfigureServices(IServiceCollection services)
         {
             var clientId = Configuration.GetValue<string>("ClientId");
-            var appId = Configuration.GetValue<string>("AppId");
+            var tenantId = Configuration.GetValue<string>("TenantId");
 
             services.AddControllersWithViews();
             services.AddSingleton(Configuration);
@@ -44,7 +44,7 @@ namespace IdentityServerLockr
                     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                     options.SignOutScheme = IdentityServerConstants.SignoutScheme;
 
-                    options.Authority = $"https://login.windows.net/{appId}";
+                    options.Authority = $"https://login.windows.net/{tenantId}";
                     options.ClientId = clientId;
                     options.ResponseType = OpenIdConnectResponseType.IdToken;
                     options.CallbackPath = "/signin-aad";

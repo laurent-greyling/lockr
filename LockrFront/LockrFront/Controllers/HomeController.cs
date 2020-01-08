@@ -21,14 +21,7 @@ namespace LockrFront.Controllers
 
         public IActionResult Index()
         {
-            var apiKey = string.Empty;
-
-            var apiKeyModel = new ApiKeyModel 
-            { 
-                ApiKey = apiKey
-            };
-
-            return View(apiKeyModel);
+            return View();
         }
 
         public IActionResult Logout()

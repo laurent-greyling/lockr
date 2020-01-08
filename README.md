@@ -31,10 +31,11 @@ Initialize-LockrEnvironment -resourceGroupName <your resourcegroupname> -locatio
 For now, you need to navigate to [Azure](https://portal.azure.com/) and set the permissions for your app at `App registration/Api permissions`.
 
 Graph:
+`Azure Active Directory > AppRegistration > Your App > Api Permissions > Add Permissions > Microsoft Graph > Delegated permissions`
 - Application.Read.All
 - IdentityProvider.Read.All
-- User.Read.All
-- Grant Administrative Rights
+Then once consent is prepared:
+`Grant admin consent for Directory ` 
 
 ### 3. Setup identity server to use AAD
 
@@ -59,7 +60,7 @@ This should allow you to use `AAD` to login. You can also use the `TestUsers` Al
 
 ### 4. Setup the MVC project
 
-For the MVC solution we use the same `ClientId` as in Identity server. This can be setup in the `appsettings.json` file of `LockrFront` by substituting the clientid with your current clientid
+For the MVC solution we use the same `ClientId` as in Identity server. This can be setup in the `appsettings.json` file of `LockrFront` by substituting the clientid with your current clientid. Also use sql connection from portal for `DbConnectionString`
 
 ```
 {
@@ -71,7 +72,8 @@ For the MVC solution we use the same `ClientId` as in Identity server. This can 
     }
   },
   "AllowedHosts": "*",
-  "ClientId": "<Directory (tenant) ID>"
+  "ClientId": "<Directory (tenant) ID>",
+  "DbConnectionString": "<Sql Connection string>"
 }
 ```
 

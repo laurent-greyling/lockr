@@ -10,7 +10,7 @@ namespace LockrFront.Database
     /// If you run add-migration YourMigrationName it will create migrations for you
     /// There after run update-database –verbose to create the tables in SQL Server
     /// </summary>
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext, IDatabaseContext
     {
         public DbSet<ApiKeyEntity> ApiKeyEntity { get; set; }
 

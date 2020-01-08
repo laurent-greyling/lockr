@@ -88,14 +88,13 @@ Tasks:
    3. Generate API key
 	- Create
 	- Encrypt
-	- Save (SQL or Keyvault???)
+	- Save (SQL)
 	- Regenerate Key and Update
 	- ApiKeyEntity //If SQL	
 	  {
 		Id = Key
 		User = UserId
 	  }
-	- If Keyvault: Name:UserId, Key:Key
 	- Visible on main page of app
 	- Tests
    

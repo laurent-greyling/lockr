@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using LockrFront.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,8 @@ namespace LockrFront
             var clientId = Configuration.GetValue<string>("ClientId");
 
             services.AddControllersWithViews();
+            services.AddScoped<IApiKeyQueries, ApiKeyQueries>();
+            services.AddScoped<IDatabaseContext, DatabaseContext>();
 
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 

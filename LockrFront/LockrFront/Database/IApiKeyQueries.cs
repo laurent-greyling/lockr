@@ -23,6 +23,6 @@ namespace LockrFront.Database
         /// Update the Api Key
         /// </summary>
         /// <param name="model"></param>
-        Task UpdateApiKey(ApiKeyModel model);
+        Task UpdateApiKeyAsync(ApiKeyModel model);
     }
 }

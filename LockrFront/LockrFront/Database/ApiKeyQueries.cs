@@ -38,7 +38,7 @@ namespace LockrFront.Database
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateApiKey(ApiKeyModel model)
+        public async Task UpdateApiKeyAsync(ApiKeyModel model)
         {
             _dbContext.ApiKeyEntity.Update(new ApiKeyEntity
             {

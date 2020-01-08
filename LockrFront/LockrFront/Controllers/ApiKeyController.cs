@@ -59,7 +59,7 @@ namespace LockrFront.Controllers
                 var apiKeyModel = _queryEntities.RetrieveApiKey(userId);
                 apiKeyModel.ApiKey = $"{Guid.NewGuid().ToString()}.{userId}";
 
-                _queryEntities.UpdateApiKey(apiKeyModel);
+                _queryEntities.UpdateApiKeyAsync(apiKeyModel);
 
                 return View(nameof(Index), apiKeyModel);
             }

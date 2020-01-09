@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LockrFrontTests
 {
-    public class Tests
+    public class ApiKeyTests
     {
         public Mock<DbSet<ApiKeyEntity>> _mockApiKeyEntity;
         public Mock<IDatabaseContext> _mockDbContext;

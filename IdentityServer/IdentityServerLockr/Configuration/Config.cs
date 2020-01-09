@@ -23,7 +23,7 @@ namespace IdentityServerLockr.Configuration
 
         public IEnumerable<ApiResource> Apis => new List<ApiResource>
             {
-                new ApiResource("api1", "My Api")
+                new ApiResource("LockrApi", "LockrApi")
             };
 
         public IEnumerable<Client> Clients =>
@@ -31,9 +31,8 @@ namespace IdentityServerLockr.Configuration
             {
                 new Client
                 {
-                    ClientId = "client",
+                    ClientId = _config.GetValue<string>("ClientIdApi"),
 
-                    // no interactive user, use the clientid/secret for authentication
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
 
                     // secret for authentication
@@ -43,11 +42,11 @@ namespace IdentityServerLockr.Configuration
                     },
 
                     // scopes that client has access to
-                    AllowedScopes = { "api1" }
+                    AllowedScopes = { "LockrApi" }
                 },
                 new Client
                 {
-                    ClientId = _config.GetValue<string>("ClientId"),
+                    ClientId = _config.GetValue<string>("ClientIdMvc"),
                     ClientSecrets = { new Secret("secret".Sha256()) },
 
                     AllowedGrantTypes = GrantTypes.Implicit,

@@ -3,14 +3,16 @@ using LockrFront.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LockrFront.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200109122423_Migration_20200109")]
+    partial class Migration_20200109
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,9 +43,6 @@ namespace LockrFront.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExpiryData")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IsValid")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NtaMxList")

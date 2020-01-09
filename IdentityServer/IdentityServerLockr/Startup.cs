@@ -23,7 +23,7 @@ namespace IdentityServerLockr
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var clientId = Configuration.GetValue<string>("ClientId");
+            var clientIdMvc = Configuration.GetValue<string>("ClientIdMvc");
             var tenantId = Configuration.GetValue<string>("TenantId");
 
             services.AddControllersWithViews();
@@ -45,7 +45,7 @@ namespace IdentityServerLockr
                     options.SignOutScheme = IdentityServerConstants.SignoutScheme;
 
                     options.Authority = $"https://login.windows.net/{tenantId}";
-                    options.ClientId = clientId;
+                    options.ClientId = clientIdMvc;
                     options.ResponseType = OpenIdConnectResponseType.IdToken;
                     options.CallbackPath = "/signin-aad";
                     options.SignedOutCallbackPath = "/signout-callback-aad";

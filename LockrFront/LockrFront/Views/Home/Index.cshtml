@@ -1,22 +1,40 @@
-﻿@using Microsoft.AspNetCore.Authentication
+﻿@model Tuple<DomainModel, List<DomainModel>>
 
-<h2>Claims</h2>
+<h2>Submit Email</h2>
+<div>Submit an email to have the domain verified</div>
 
-<dl>
-    @foreach (var claim in User.Claims)
+@using (Html.BeginForm("VerifyDomain", "Home"))
+{
+    <div>
+        <label>Email to be checked:</label>
+    </div>
+    <div>
+        @Html.TextBoxFor(m => m.Item1.Address)
+    </div>
+    <div>
+        <input type="submit" value="Verify" />
+    </div>
+}
+
+
+<table>
+    <tr>
+        <td>Address</td>
+        <td>ExpiryDate</td>
+        <td>Provider</td>
+        <td>Status</td>
+    </tr>
+
+    @foreach (var item in Model.Item2)
     {
-        <dt>@claim.Type</dt>
-        <dd>@claim.Value</dd>
+<tr>
+    <td>@item.Address</td>
+    <td>@item.ExpiryData</td>
+    <td>@item.Provider</td>
+    <td>@item.IsValid</td>
+</tr>
     }
-</dl>
 
-<h2>Properties</h2>
+</table>
 
-<dl>
-    @foreach (var prop in (await Context.AuthenticateAsync()).Properties.Items)
-    {
-        <dt>@prop.Key</dt>
-        <dd>@prop.Value</dd>
-    }
-</dl>
 

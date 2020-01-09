@@ -63,11 +63,20 @@ function RegisterAppOnAad
         )
 
         Write-Host "Registering app with AAD"  -ForegroundColor Yellow
-        $aadRegisterApp = az ad app create --display-name $registeredAppDisplayName --reply-urls $redirectUri
+        $mvcDisplayName = "${registeredAppDisplayName}MVC"
+        $apiDisplayName = "${registeredAppDisplayName}Api"
 
-        $appInfo = $aadRegisterApp | ConvertFrom-Json
+        Write-Host "Registering MVC App"  -ForegroundColor Yellow
+        $aadRegisterAppMvc = az ad app create --display-name $mvcDisplayName --reply-urls $redirectUri
 
-        Write-Host "Make Note of Application (Client) ID: "$appInfo.appId -ForegroundColor Yellow
+        Write-Host "Registering Api App"  -ForegroundColor Yellow
+        $aadRegisterAppApi = az ad app create --display-name $apiDisplayName --reply-urls $redirectUri
+
+        $appInfoMvc = $aadRegisterAppMvc | ConvertFrom-Json
+        $appInfoApi = $aadRegisterAppApi | ConvertFrom-Json
+
+        Write-Host "Make Note of the MVC Application (Client) ID: "$appInfoMvc.appId -ForegroundColor Yellow
+        Write-Host "Make Note of the Api Application (Client) ID: "$appInfoApi.appId -ForegroundColor Yellow
 
         $tenantId = az account get-access-token --query tenant --output tsv
         Write-Host "Make Note of Directory (Tenant) ID: $tenantId"  -ForegroundColor Yellow

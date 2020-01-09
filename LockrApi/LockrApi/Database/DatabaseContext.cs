@@ -1,18 +1,12 @@
-﻿using LockrFront.Entities;
+﻿using LockrApi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace LockrFront.Database
+namespace LockrApi.Database
 {
-    /// <summary>
-    /// Database context for EF Core 
-    /// If you run add-migration YourMigrationName it will create migrations for you
-    /// There after run update-database –verbose to create the tables in SQL Server
-    /// </summary>
     public class DatabaseContext : DbContext, IDatabaseContext
     {
-        public DbSet<ApiKeyEntity> ApiKeyEntity { get; set; }
         public DbSet<DomainEntity> DomainEntity { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

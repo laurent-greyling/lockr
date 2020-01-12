@@ -10,6 +10,17 @@ The `Initialize-LockrEnvironment` script will:
 - Create SQLServer called `{resourceGroupName}sqlserver` and a Database called `LockrDb`
     - __Please Note__ You need to go into Azure Portal to set the Firewall rules for SQL Server as well as change/reset default password for security
 - Register a MVC and API app with Active Directory and display your `TenantId (tenant)` and `AppId (appId)` on screen for use in `Identity Server` (`AppId`, `ClientId`), the `MVC app` (`ClientId for MVC`) and `Api App` (`ClientId for API`) in appsettings.
+- Replace the `appsettings.json` files for all three apps, with replaced settings values as from Azure.
+- Print on screen guide to how to check settings and some manual setup requirements for Azure to run the apps.
+    - Note: You can set any ClientId(s), as long as they match the app that needs them. For example if you make your clientId for LockrFront `MVCID`, then in Identity Server it should be `ClientIdMvc: MVCID` and in LockrFront it should be `ClientId: MVCID`. This will not allow AAD login but you can login with the test users Alice and Bob
+
+`appsettings.json` variable list:
+|Identity Server|LockrFront|LockrApi|
+|--|--|--|
+|ClientIdMvc|ClientId||
+|ClientIdApi|ClientIdApi|ClientId|
+|TenantId|||
+||DbConnectionString|DbConnectionString|
 
 To run the script open `powershell` and navigate to ".\Setup". From here run `Import-Module .\New-Environment.psm1 -Force`
 
@@ -39,7 +50,9 @@ Then once consent is prepared:
 
 ### 3. Setup identity server to use AAD
 
-In the `Identity Server` solution, change the configuration in the `appsettings.json` to be able to use AAD. Use the `TenantId` (`ClientID`) and `AppId` and substitute the values as below. 
+__NOTE__ The powershell script should have done this for you already.
+
+In the `Identity Server` solution, change the configuration in the `appsettings.json` to be able to use AAD. Use the `TenantId`, `ClientIdApi` and `ClientIdMvc` and substitute the values as below. 
 
 ```
 {
@@ -61,6 +74,8 @@ This should allow you to use `AAD` to login. You can also use the `TestUsers` Al
 
 ### 4. Setup the MVC and Api projects
 
+__NOTE__ The powershell script should have done this for you already.
+
 For the solutions we use the same `ClientIdMVC` for MVC project and `ClientIdApi` for Api project as in Identity server. This can be setup in the `appsettings.json` file of `LockrFront` and `LockrApi` by substituting the clientid with your current clientids. Also use sql connection from portal for `DbConnectionString`. The connection string you can find in your resource group under connections for the sql server (you will need to substitute your password in this connection string)
 
 MVC Settings
@@ -75,7 +90,7 @@ MVC Settings
   },
   "AllowedHosts": "*",
   "Authority": "http://localhost:5000",
-  "ClientId": "<Directory (tenant) ID>",
+  "ClientId": "Application (Client) ID MVC",
   "ClientIdApi": "<Application (Client) ID Api>",
   "ApiRequestUri": "http://localhost:5003/api/",
   "DbConnectionString": "<Sql Connection string>"
@@ -94,7 +109,7 @@ API Settings
   },
   "AllowedHosts": "*",
   "Authority": "http://localhost:5000"
-  "ClientId": "<Directory (tenant) ID>",
+  "ClientId": "<Application (Client) ID Api>",
   "DbConnectionString": "<Sql Connection string>"
 }
 ```

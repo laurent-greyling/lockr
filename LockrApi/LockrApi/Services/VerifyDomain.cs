@@ -1,21 +1,25 @@
 ﻿using System.Threading.Tasks;
 using DnsClient;
-using System.Net.Mail;
 using System;
 using LockrApi.Entities;
 using System.Text;
 using LockrApi.Database;
 using System.Globalization;
+using LockrApi.Utilities;
 
 namespace LockrApi.Services
 {
     public class VerifyDomain : IVerifyDomain
     {
         public IDomainQueries _domainQueries;
+        public IDomainValidation _domainValidation;
 
-        public VerifyDomain(IDomainQueries domainQueries) 
+        public VerifyDomain(
+            IDomainQueries domainQueries,
+            IDomainValidation domainValidation) 
         {
             _domainQueries = domainQueries;
+            _domainValidation = domainValidation;
         }
 
         public async Task<DomainEntity> Verify(string domain)
@@ -23,13 +27,12 @@ namespace LockrApi.Services
             var domainToVerify = string.Empty;
             var domainEntity = new DomainEntity();
 
-            if (IsValidEmail(domain))
+            if (_domainValidation.IsValidEmail(domain))
             {
-                var mailAddress = new MailAddress(domain);
-                domainToVerify = mailAddress.Host;
+                domainToVerify = _domainValidation.DomainFromEmail(domain);
             }
 
-            if (IsValidDomainName(domain))
+            if (_domainValidation.IsValidDomainName(domain))
             {
                 domainToVerify = domain;
             }
@@ -49,8 +52,7 @@ namespace LockrApi.Services
                     .Replace("\\", "")
                     .Split(";");
 
-                domainEntity.Id = Guid.NewGuid().ToString();
-                domainEntity.Address = domainToVerify;
+                domainEntity.Id = domainToVerify;
 
                 var mxDomains = new StringBuilder();
 
@@ -119,34 +121,6 @@ namespace LockrApi.Services
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Validate if string is email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// validate if it is domain name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        private bool IsValidDomainName(string name)
-        {
-            return Uri.CheckHostName(name) != UriHostNameType.Unknown;
         }
     }
 }

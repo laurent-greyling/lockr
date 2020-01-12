@@ -1,6 +1,6 @@
 ## Setup Identity Server and Login
 
-For signin we preferably want to use `Azure Active Directory` to login as it allows us not to write our own authentication code to create secure user profiles. For this excersice we will not create new users, we assume you have an Azure Account with a `Default Active Directory` setup with yourself as an owner or already registered users. 
+For signin we preferably want to use `Azure Active Directory` to login as it allows us not to write our own authentication code to create secure user profiles. For this excersice we will not create new users (Test users as mentioned later can be used), we assume you have an Azure Account with a `Default Active Directory` setup with yourself as an owner or already registered users. 
 
 ### 1. Run the `Initialize-LockrEnvironment` script
 
@@ -53,7 +53,7 @@ In the `Identity Server` solution, change the configuration in the `appsettings.
   "AllowedHosts": "*",
    "ClientIdMvc": "Application (Client) ID MVC",
   "ClientIdApi": "Application (Client) ID Api",
-  "AppId": "<Your Application (client) ID>"
+  "TenantId": "<Directory (Tenant) ID>"
 }
 ```
 
@@ -61,7 +61,7 @@ This should allow you to use `AAD` to login. You can also use the `TestUsers` Al
 
 ### 4. Setup the MVC and Api projects
 
-For the solutions we use the same `ClientIdMVC` for MVC project and `ClientIdApi` for Api project as in Identity server. This can be setup in the `appsettings.json` file of `LockrFront` and `LockrApi` by substituting the clientid with your current clientids. Also use sql connection from portal for `DbConnectionString`
+For the solutions we use the same `ClientIdMVC` for MVC project and `ClientIdApi` for Api project as in Identity server. This can be setup in the `appsettings.json` file of `LockrFront` and `LockrApi` by substituting the clientid with your current clientids. Also use sql connection from portal for `DbConnectionString`. The connection string you can find in your resource group under connections for the sql server (you will need to substitute your password in this connection string)
 
 MVC Settings
 ```
@@ -74,9 +74,10 @@ MVC Settings
     }
   },
   "AllowedHosts": "*",
+  "Authority": "http://localhost:5000",
   "ClientId": "<Directory (tenant) ID>",
   "ClientIdApi": "<Application (Client) ID Api>",
-  "ApiRequestUri": "<Api URI>",
+  "ApiRequestUri": "http://localhost:5003/api/",
   "DbConnectionString": "<Sql Connection string>"
 }
 ```
@@ -92,6 +93,7 @@ API Settings
     }
   },
   "AllowedHosts": "*",
+  "Authority": "http://localhost:5000"
   "ClientId": "<Directory (tenant) ID>",
   "DbConnectionString": "<Sql Connection string>"
 }
@@ -108,6 +110,7 @@ Run `update-database –verbose` or `dotnet ef database update` to run Migration
 
 Tables:
 - ApiKeys
+- Domain
 
 ## MVC App (Front End)
 Once you run the Identity server and the MVC app, you can signin with either the test users Alice or Bob, but AAD should be setup in such a way that you can use your AAD credentials to signin as well to this app.
@@ -120,6 +123,7 @@ Once you are signed in, you can:
 
 - Send `Email address` or `domain` to Api. When on the home page you can enter an email address or domain name and press the validate button. This will send the information for validation to the api where it will be saved into the table for domains.
   - Once a domain is sent, if successfully checked and saved it will dispaly underneath the validation button in a table, this will show if domain is valid or not.
+- Update `domain`, if you send the same domain through, the controller will check if this entity already exist and then update that domain.
 
   ## API App
   The api will receive an `email address` or  `domain name` and check:
@@ -130,14 +134,31 @@ Once you are signed in, you can:
 
   Once this validation is done, a domain will be saved with status of `valid` or `invalid`, and return the saved records.
 
-  ### To Run This App
-  1. Do the setup as mentioned above
-  2. Start the Identity Server
-  3. Start the MVC app
-  4. Start the API app
-  5. Signin to the MVC App and send your domain to be checked or create api Key
+ __Note__ at point of writing this, the generated api key will not allow access to the api yet. If you want access to api, either run the MVC app, or use the `Discover Access Token` console app to get the `Bearer` token and use that for now.
 
-  __Note__ at point of writing this, the generated api key will not allow access to the api yet. If you want access to api, either run the MVC app, or use the `Discover Access Token` console app to get the `Bearer` token and use that for now.
+### To Run This App
+1. Do the setup as mentioned above
+2. Identity Server (Local setup)
+    - Right click project
+    - Navigate to Debug
+    - Set App URL to `http://localhost:5000/`
+    - For now uncheck `Enable SSL`
+    - Run Identity Server
+3. MVC app (Local setup)
+    - Right click project
+    - Navigate to Debug
+    - Set App URL to `http://localhost:5001/`
+    - For now uncheck `Enable SSL`
+    - Run MVC App
+4. API app  (Local setup)
+    - Right click project
+    - Navigate to Debug
+    - Set App URL to `http://localhost:5003/`
+    - For now uncheck `Enable SSL`
+    - Run MVC App
+5. Signin to the MVC App and send your domain to be checked or create api Key. For the MVC app there is a token lifespan of 10min, if you as user is inactive for 10 or more minutes and try to take an action, you will be redirected to signin.
+
+### Some Notes 
 
 Although the MVC app can generate and regenerate an API key, my focus was more on `Access Token` authentication as I see this as a more secure route. With a `Bearer` token I can set a proper expiry time before it needs to be refreshed (not currently in this app), or kick an inactive user back to login screen. Users who also logout, will then expire the `Access Token`, unauthorizing the person who might be using the token in a malicious manner. This makes it more secure, even if you get hold of the token, you will have a limited time to execute any malicious intent. When it comes to highly personal information, I do not want a token access policy that could potentially see me logged in for life. Also, if an employee leaves a company and his/her access rights are revoked, he or she has no more access to the data.
 

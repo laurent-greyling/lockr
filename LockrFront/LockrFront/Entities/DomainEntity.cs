@@ -7,16 +7,11 @@ namespace LockrFront.Entities
     public class DomainEntity
     {
         /// <summary>
-        /// Domian Identifier
+        /// Domian Identifier (Domain name/address)
+        /// Domain names are unique
         /// </summary>
         [Key]
         public string Id { get; set; }
-
-        /// <summary>
-        /// Domain Address
-        /// </summary>
-        [Required]
-        public string Address { get; set; }
 
         /// <summary>
         /// document version

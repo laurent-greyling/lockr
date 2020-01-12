@@ -1,6 +1,7 @@
 using IdentityServer4.AccessTokenValidation;
 using LockrApi.Database;
 using LockrApi.Services;
+using LockrApi.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace LockrApi
             services.AddScoped<IDomainQueries, DomainQueries>();
             services.AddScoped<IDatabaseContext, DatabaseContext>();
             services.AddScoped<IVerifyDomain, VerifyDomain>();
+            services.AddScoped<IDomainValidation, DomainValidation>();
 
             services.AddMvcCore()
                 .AddAuthorization();

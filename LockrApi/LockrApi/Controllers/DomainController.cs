@@ -3,7 +3,6 @@ using LockrApi.Models;
 using LockrApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +44,6 @@ namespace LockrApi.Controllers
                 return new DomainModel 
                 {
                     Id = x.Id,
-                    Address = x.Address,
                     Version = x.Version,
                     ExpiryData = x.ExpiryData,
                     Provider = x.Provider,
@@ -65,14 +63,24 @@ namespace LockrApi.Controllers
         [HttpPost]
         public async Task Post(DomainModel model)
         {
-            var domainEntity = await _verifyDomain.Verify(model.Address);
+            var domainEntity = await _verifyDomain.Verify(model.Id);
+
+            if (domainEntity == null)
+            {
+                return;
+            }
+
+            var entity = await _domainQueries.RetrieveDomainDetailsAsync(model.Id);
+            //If we have the same entity update
+            if (entity != null)
+            {
+                await _domainQueries.UpdateDomainDetailsAsync(domainEntity);
+                return;
+            }
 
             //Will only save domains that are validated as a domain.
             //Will still save even if invalid spf domain, but will ignore any string that was not parsed as a domain or email
-            if (domainEntity != null)
-            {
-                await _domainQueries.SaveApiKeyAsync(domainEntity);
-            }            
+            await _domainQueries.SaveDomainDetailsAsync(domainEntity);           
         }
     }
 }

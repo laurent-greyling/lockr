@@ -3,14 +3,10 @@
     public class DomainModel
     {
         /// <summary>
-        /// Domian Identifier
+        /// Domian Identifier (Domain name/address)
+        /// Domain names are unique
         /// </summary>
         public string Id { get; set; }
-
-        /// <summary>
-        /// Domain Address
-        /// </summary>
-        public string Address { get; set; }
 
         /// <summary>
         /// document version

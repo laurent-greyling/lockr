@@ -3,14 +3,9 @@
     public class DomainModel
     {
         /// <summary>
-        /// Domian Identifier
+        /// Domian Identifier  (Domain Name/Address)
         /// </summary>
         public string Id { get; set; }
-
-        /// <summary>
-        /// Domain Address
-        /// </summary>
-        public string Address { get; set; }
 
         /// <summary>
         /// document version

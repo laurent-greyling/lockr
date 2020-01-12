@@ -1,3 +1,4 @@
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using LockrFront.Database;
 using LockrFront.Services;
@@ -38,7 +39,11 @@ namespace LockrFront
                 options.DefaultScheme = "Cookies";
                 options.DefaultChallengeScheme = "aad";
             })
-                .AddCookie("Cookies")
+                .AddCookie("Cookies", options =>
+                {
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                })
                 .AddOpenIdConnect("aad", options =>
                 {
                     options.Authority = authority;

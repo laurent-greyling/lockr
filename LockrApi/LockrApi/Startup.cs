@@ -42,23 +42,6 @@ namespace LockrApi
 
             //services.AddAuthentication(options =>
             //{
-            //    options.DefaultScheme = "Cookies";
-            //    options.DefaultChallengeScheme = "aad";
-            //})
-            //    .AddCookie("Cookies")
-            //    .AddOpenIdConnect("aad", options =>
-            //    {
-            //        options.Authority = authority;
-            //        options.RequireHttpsMetadata = false;
-
-            //        options.ClientId = clientId;
-            //        options.ResponseType = OpenIdConnectResponseType.IdToken;
-
-            //        options.SaveTokens = true;
-            //    });
-
-            //services.AddAuthentication(options =>
-            //{
             //    options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
             //    options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
             //}).AddApiKeySupport(options => { });

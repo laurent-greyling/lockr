@@ -42,7 +42,8 @@ namespace IdentityServerLockr.Configuration
                     },
 
                     // scopes that client has access to
-                    AllowedScopes = { "LockrApi" }
+                    AllowedScopes = { "LockrApi" },
+                    UpdateAccessTokenClaimsOnRefresh = true
                 },
                 new Client
                 {
@@ -64,7 +65,8 @@ namespace IdentityServerLockr.Configuration
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile
-                    }
+                    },
+                    UpdateAccessTokenClaimsOnRefresh = true
                 }
             };
     }

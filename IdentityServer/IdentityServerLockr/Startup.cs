@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace IdentityServerLockr
 {
@@ -38,7 +39,15 @@ namespace IdentityServerLockr
 
             builder.AddDeveloperSigningCredential();
 
-            services.AddAuthentication()
+            services.AddAuthentication(options=> 
+            {
+                options.DefaultScheme = "Cookies";
+            })
+                .AddCookie("Cookies", options =>
+                {
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                })
                 .AddOpenIdConnect("aad", "Azure AD", options =>
                 {
                     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
